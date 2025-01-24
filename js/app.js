@@ -46,7 +46,7 @@ async function setup() {
     
         const oscilloscopeCanvas = document.getElementById('oscilloscope');
         oscilloscopeCanvas.width = oscilloscopeCanvas.offsetWidth;
-        oscilloscopeCanvas.height = 230;
+        oscilloscopeCanvas.height = 430;
         const oscilloscopeContext = oscilloscopeCanvas.getContext("2d");
     
         function drawOscilloscope() {
@@ -62,7 +62,7 @@ async function setup() {
             let x = 0;
     
             for (let i = 0; i < bufferLength; i++) {
-                const v = dataArray[i] / 128.0;
+                const v = dataArray[i] / 256.0;
                 const y = (v * oscilloscopeCanvas.height) / 2;
     
                 if (i === 0) {
