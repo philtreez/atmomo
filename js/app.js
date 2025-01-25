@@ -28,6 +28,7 @@ async function setup() {
         if (context.state === "suspended") {
             window.addEventListener("click", () => context.resume(), { once: true });
         }
+
         setupOscilloscope(context, device, outputNode);
 
     } catch (err) {
@@ -37,8 +38,8 @@ async function setup() {
 
 function setupOscilloscope(context, device, outputNode) {
     const analyserNode = context.createAnalyser();
-    analyserNode.fftSize = 1024; // Kleinere FFT-Größe für eine ruhigere Bewegung
-    analyserNode.smoothingTimeConstant = 0.85; // Sanfte Übergänge
+    analyserNode.fftSize = 1024; // Kleinere FFT-Größe für ruhigere Bewegung
+    analyserNode.smoothingTimeConstant = 0.85; // Sanftere Übergänge
 
     const bufferLength = analyserNode.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
@@ -55,12 +56,12 @@ function setupOscilloscope(context, device, outputNode) {
         requestAnimationFrame(drawOscilloscope);
         analyserNode.getByteTimeDomainData(dataArray);
 
-        // Hintergrund mit sanftem Fading statt hartem Clear
-        oscilloscopeContext.fillStyle = "rgba(0, 0, 0, 0.05)"; // Langsames Ausblenden für sanfte Übergänge
+        // Hintergrund langsam verblassen lassen für einen weichen Verlauf
+        oscilloscopeContext.fillStyle = "rgba(0, 0, 0, 0.1)";
         oscilloscopeContext.fillRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
 
-        oscilloscopeContext.lineWidth = 2; // Dünnere Linie für ruhigeren Look
-        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.7)"; // Leichte Transparenz für weiche Effekte
+        oscilloscopeContext.lineWidth = 2;
+        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)";
         oscilloscopeContext.beginPath();
 
         const sliceWidth = oscilloscopeCanvas.width / bufferLength;
@@ -68,7 +69,9 @@ function setupOscilloscope(context, device, outputNode) {
 
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
-            const y = (v * oscilloscopeCanvas.height) / 2;
+
+            // Variiere die Höhe durch Skalierung und zufällige Verschiebung
+            const y = (v * oscilloscopeCanvas.height * 0.8) + (Math.sin(i * 0.02) * 10);
 
             if (i === 0) {
                 oscilloscopeContext.moveTo(x, y);
@@ -85,7 +88,6 @@ function setupOscilloscope(context, device, outputNode) {
 
     drawOscilloscope(); // Zeichnen starten
 }
-
 
 function loadRNBOScript(version) {
     return new Promise((resolve, reject) => {
