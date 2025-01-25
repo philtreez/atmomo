@@ -62,55 +62,53 @@ function setupOscilloscope(context, device, outputNode) {
     function drawOscilloscope() {
         requestAnimationFrame(drawOscilloscope);
         analyserNode.getByteTimeDomainData(dataArray);
-
-        // **Haupt-Visualisierung**
-        oscilloscopeContext.fillStyle = "rgba(0, 0, 0, 0.1)";
-        oscilloscopeContext.fillRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
+    
+        // **Erste Wellenform (normale Darstellung)**
+        oscilloscopeContext.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height); // Kein Hintergrund
         oscilloscopeContext.lineWidth = 2;
-        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)";
+        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)"; // Leicht leuchtend
         oscilloscopeContext.beginPath();
-
+    
         const sliceWidth = oscilloscopeCanvas.width / bufferLength;
         let x = 0;
-
+    
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
             const y = (v * oscilloscopeCanvas.height * 0.8) + (Math.sin(i * 0.02) * 10);
-
+    
             if (i === 0) {
                 oscilloscopeContext.moveTo(x, y);
             } else {
                 oscilloscopeContext.lineTo(x, y);
             }
-
+    
             x += sliceWidth;
         }
         oscilloscopeContext.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height / 2);
         oscilloscopeContext.stroke();
-
-        // **Ghost-Visualisierung in separatem Canvas**
-        oscilloscopeGhostContext.fillStyle = "rgba(0, 0, 0, 0.1)";
-        oscilloscopeGhostContext.fillRect(0, 0, oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height);
+    
+        // **Zweite Welle ("Ghost") in separatem Canvas**
+        oscilloscopeGhostContext.clearRect(0, 0, oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height);
         oscilloscopeGhostContext.lineWidth = 1.5;
-        oscilloscopeGhostContext.strokeStyle = "rgba(0, 200, 100, 0.5)";
+        oscilloscopeGhostContext.strokeStyle = "rgba(0, 200, 100, 0.5)"; // Noch transparenter
         oscilloscopeGhostContext.beginPath();
-
+    
         x = 0;
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
             const y = (v * oscilloscopeGhostCanvas.height * 1.2) + (Math.sin(i * 0.015) * 25);
-
+    
             if (i === 0) {
                 oscilloscopeGhostContext.moveTo(x, y);
             } else {
                 oscilloscopeGhostContext.lineTo(x, y);
             }
-
+    
             x += sliceWidth;
         }
         oscilloscopeGhostContext.lineTo(oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height / 2);
         oscilloscopeGhostContext.stroke();
-    }
+    }    
 
     drawOscilloscope();
 }
