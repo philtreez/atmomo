@@ -132,14 +132,14 @@ function setupOscilloscope(context, device, outputNode) {
 
         oscilloscopeExperimentalContext.clearRect(0, 0, oscilloscopeExperimentalCanvas.width, oscilloscopeExperimentalCanvas.height);
         oscilloscopeExperimentalContext.lineWidth = 2.5;
-        oscilloscopeExperimentalContext.strokeStyle = "rgba(255, 50, 50, 0.9)"; // Auffällige rote Linie für starken Kontrast
+        oscilloscopeExperimentalContext.strokeStyle = "rgba(50, 255, 135, 0.9)"; // Auffällige rote Linie für starken Kontrast
         oscilloscopeExperimentalContext.beginPath();
 
         const sliceWidthExp = oscilloscopeExperimentalCanvas.width / bufferLengthExp;
         let x = 0;
 
         for (let i = 0; i < bufferLengthExp; i++) {
-            const v = dataArrayExp[i] / 256.0;
+            const v = dataArrayExp[i] / 512.0;
             const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 15 * Math.random()); // Verzerrung für glitchigen Effekt
 
             if (i === 0) {
