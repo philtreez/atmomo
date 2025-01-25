@@ -140,7 +140,7 @@ function setupOscilloscope(context, device, outputNode) {
 
         for (let i = 0; i < bufferLengthExp; i++) {
             const v = dataArrayExp[i] / 512.0;
-            const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 15 * Math.random()); // Verzerrung für glitchigen Effekt
+            const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 2 * Math.random()); // Verzerrung für glitchigen Effekt
 
             if (i === 0) {
                 oscilloscopeExperimentalContext.moveTo(x, y);
