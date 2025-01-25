@@ -38,7 +38,7 @@ async function setup() {
 
 function setupOscilloscope(context, device, outputNode) {
     const analyserNode = context.createAnalyser();
-    analyserNode.fftSize = 1024; 
+    analyserNode.fftSize = 2048; 
     analyserNode.smoothingTimeConstant = 0.85;
 
     const bufferLength = analyserNode.frequencyBinCount;
@@ -63,7 +63,7 @@ function setupOscilloscope(context, device, outputNode) {
     const oscilloscopeExperimentalContext = oscilloscopeExperimentalCanvas.getContext("2d");
 
     const analyserNodeExperimental = context.createAnalyser();
-    analyserNodeExperimental.fftSize = 512; // Andere FFT-Auflösung für mehr Details
+    analyserNodeExperimental.fftSize = 4096; // Andere FFT-Auflösung für mehr Details
     analyserNodeExperimental.smoothingTimeConstant = 1; // Weniger Glättung für schärfere Peaks
     const bufferLengthExp = analyserNodeExperimental.frequencyBinCount;
     const dataArrayExp = new Uint8Array(bufferLengthExp);
