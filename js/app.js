@@ -105,7 +105,7 @@ function setupOscilloscope(context, device, outputNode) {
 
         // **Zweite Welle ("Ghost")**
         oscilloscopeGhostContext.clearRect(0, 0, oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height);
-        oscilloscopeGhostContext.lineWidth = 1.5;
+        oscilloscopeGhostContext.lineWidth = 4;
         oscilloscopeGhostContext.strokeStyle = "rgba(0, 200, 100, 0.5)";
         oscilloscopeGhostContext.beginPath();
 
@@ -139,7 +139,7 @@ function setupOscilloscope(context, device, outputNode) {
         let x = 0;
 
         for (let i = 0; i < bufferLengthExp; i++) {
-            const v = dataArrayExp[i] / 512.0;
+            const v = dataArrayExp[i] / 128.0;
             const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 2 * Math.random()); // Verzerrung für glitchigen Effekt
 
             if (i === 0) {
