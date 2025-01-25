@@ -50,18 +50,29 @@ function setupOscilloscope(context, device, outputNode) {
     // **Erster Canvas (Hauptoszilloskop)**
     const oscilloscopeCanvas = document.getElementById('oscilloscope-main');
     resizeCanvas(oscilloscopeCanvas);
-
     const oscilloscopeContext = oscilloscopeCanvas.getContext("2d");
 
     // **Zweiter Canvas (Ghost-Welle)**
     const oscilloscopeGhostCanvas = document.getElementById('oscilloscope-ghost');
     resizeCanvas(oscilloscopeGhostCanvas);
-
     const oscilloscopeGhostContext = oscilloscopeGhostCanvas.getContext("2d");
 
+    // **Dritter Canvas (Experimental)**
+    const oscilloscopeExperimentalCanvas = document.getElementById('oscilloscope-experimental');
+    resizeCanvas(oscilloscopeExperimentalCanvas);
+    const oscilloscopeExperimentalContext = oscilloscopeExperimentalCanvas.getContext("2d");
+
+    const analyserNodeExperimental = context.createAnalyser();
+    analyserNodeExperimental.fftSize = 512; // Andere FFT-Auflösung für mehr Details
+    analyserNodeExperimental.smoothingTimeConstant = 0.3; // Weniger Glättung für schärfere Peaks
+    const bufferLengthExp = analyserNodeExperimental.frequencyBinCount;
+    const dataArrayExp = new Uint8Array(bufferLengthExp);
+
+    device.node.connect(analyserNodeExperimental);
+
     function resizeCanvas(canvas) {
-        canvas.width = window.innerWidth;  // Setzt die Breite auf die Fensterbreite
-        canvas.height = 430;               // Oder eine gewünschte Höhe setzen
+        canvas.width = window.innerWidth;  
+        canvas.height = 430;               
     }
 
     function drawOscilloscope() {
@@ -115,14 +126,45 @@ function setupOscilloscope(context, device, outputNode) {
         oscilloscopeGhostContext.stroke();
     }
 
+    function drawExperimentalOscilloscope() {
+        requestAnimationFrame(drawExperimentalOscilloscope);
+        analyserNodeExperimental.getByteTimeDomainData(dataArrayExp);
+
+        oscilloscopeExperimentalContext.clearRect(0, 0, oscilloscopeExperimentalCanvas.width, oscilloscopeExperimentalCanvas.height);
+        oscilloscopeExperimentalContext.lineWidth = 2.5;
+        oscilloscopeExperimentalContext.strokeStyle = "rgba(255, 50, 50, 0.9)"; // Auffällige rote Linie für starken Kontrast
+        oscilloscopeExperimentalContext.beginPath();
+
+        const sliceWidthExp = oscilloscopeExperimentalCanvas.width / bufferLengthExp;
+        let x = 0;
+
+        for (let i = 0; i < bufferLengthExp; i++) {
+            const v = dataArrayExp[i] / 256.0;
+            const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 15 * Math.random()); // Verzerrung für glitchigen Effekt
+
+            if (i === 0) {
+                oscilloscopeExperimentalContext.moveTo(x, y);
+            } else {
+                oscilloscopeExperimentalContext.lineTo(x, y);
+            }
+
+            x += sliceWidthExp;
+        }
+        oscilloscopeExperimentalContext.lineTo(oscilloscopeExperimentalCanvas.width, oscilloscopeExperimentalCanvas.height / 2);
+        oscilloscopeExperimentalContext.stroke();
+    }
+
     drawOscilloscope();
+    drawExperimentalOscilloscope();
 
     // **Canvas soll sich anpassen, wenn Fenstergröße geändert wird**
     window.addEventListener("resize", () => {
         resizeCanvas(oscilloscopeCanvas);
         resizeCanvas(oscilloscopeGhostCanvas);
+        resizeCanvas(oscilloscopeExperimentalCanvas);
     });
 }
+
 
 
 
