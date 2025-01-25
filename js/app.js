@@ -49,69 +49,81 @@ function setupOscilloscope(context, device, outputNode) {
 
     // **Erster Canvas (Hauptoszilloskop)**
     const oscilloscopeCanvas = document.getElementById('oscilloscope-main');
-    oscilloscopeCanvas.width = oscilloscopeCanvas.offsetWidth;
-    oscilloscopeCanvas.height = 430;
+    resizeCanvas(oscilloscopeCanvas);
+
     const oscilloscopeContext = oscilloscopeCanvas.getContext("2d");
 
     // **Zweiter Canvas (Ghost-Welle)**
     const oscilloscopeGhostCanvas = document.getElementById('oscilloscope-ghost');
-    oscilloscopeGhostCanvas.width = oscilloscopeGhostCanvas.offsetWidth;
-    oscilloscopeGhostCanvas.height = 430;
+    resizeCanvas(oscilloscopeGhostCanvas);
+
     const oscilloscopeGhostContext = oscilloscopeGhostCanvas.getContext("2d");
+
+    function resizeCanvas(canvas) {
+        canvas.width = window.innerWidth;  // Setzt die Breite auf die Fensterbreite
+        canvas.height = 430;               // Oder eine gewünschte Höhe setzen
+    }
 
     function drawOscilloscope() {
         requestAnimationFrame(drawOscilloscope);
         analyserNode.getByteTimeDomainData(dataArray);
-    
-        // **Erste Wellenform (normale Darstellung)**
-        oscilloscopeContext.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height); // Kein Hintergrund
+
+        // **Haupt-Visualisierung**
+        oscilloscopeContext.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
         oscilloscopeContext.lineWidth = 2;
-        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)"; // Leicht leuchtend
+        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)";
         oscilloscopeContext.beginPath();
-    
+
         const sliceWidth = oscilloscopeCanvas.width / bufferLength;
         let x = 0;
-    
+
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
             const y = (v * oscilloscopeCanvas.height * 0.8) + (Math.sin(i * 0.02) * 10);
-    
+
             if (i === 0) {
                 oscilloscopeContext.moveTo(x, y);
             } else {
                 oscilloscopeContext.lineTo(x, y);
             }
-    
+
             x += sliceWidth;
         }
         oscilloscopeContext.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height / 2);
         oscilloscopeContext.stroke();
-    
-        // **Zweite Welle ("Ghost") in separatem Canvas**
+
+        // **Zweite Welle ("Ghost")**
         oscilloscopeGhostContext.clearRect(0, 0, oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height);
         oscilloscopeGhostContext.lineWidth = 1.5;
-        oscilloscopeGhostContext.strokeStyle = "rgba(0, 200, 100, 0.5)"; // Noch transparenter
+        oscilloscopeGhostContext.strokeStyle = "rgba(0, 200, 100, 0.5)";
         oscilloscopeGhostContext.beginPath();
-    
+
         x = 0;
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
             const y = (v * oscilloscopeGhostCanvas.height * 1.2) + (Math.sin(i * 0.015) * 25);
-    
+
             if (i === 0) {
                 oscilloscopeGhostContext.moveTo(x, y);
             } else {
                 oscilloscopeGhostContext.lineTo(x, y);
             }
-    
+
             x += sliceWidth;
         }
         oscilloscopeGhostContext.lineTo(oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height / 2);
         oscilloscopeGhostContext.stroke();
-    }    
+    }
 
     drawOscilloscope();
+
+    // **Canvas soll sich anpassen, wenn Fenstergröße geändert wird**
+    window.addEventListener("resize", () => {
+        resizeCanvas(oscilloscopeCanvas);
+        resizeCanvas(oscilloscopeGhostCanvas);
+    });
 }
+
 
 
 function loadRNBOScript(version) {
