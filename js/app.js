@@ -54,7 +54,7 @@ function setupOscilloscope(context, device, outputNode) {
 
     function resizeCanvas(canvas) {
         canvas.width = window.innerWidth;  
-        canvas.height = 960;               
+        canvas.height = 1200;               
     }
 
     function drawOscilloscope() {
