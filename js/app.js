@@ -83,6 +83,7 @@ function setupOscilloscope(context, device, outputNode) {
         oscilloscopeContext.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
         oscilloscopeContext.lineWidth = 2;
         oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)";
+        oscilloscopeContext.fillStyle = "rgba(0, 255, 130, 0.3)"; // Farbe für die Fläche
         oscilloscopeContext.beginPath();
 
         const sliceWidth = oscilloscopeCanvas.width / bufferLength;
@@ -101,12 +102,16 @@ function setupOscilloscope(context, device, outputNode) {
             x += sliceWidth;
         }
         oscilloscopeContext.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height / 2);
+        oscilloscopeContext.lineTo(0, oscilloscopeCanvas.height / 2); // Zurück zur Basislinie
+        oscilloscopeContext.closePath();
+        oscilloscopeContext.fill(); // Fläche füllen
         oscilloscopeContext.stroke();
 
         // **Zweite Welle ("Ghost")**
         oscilloscopeGhostContext.clearRect(0, 0, oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height);
         oscilloscopeGhostContext.lineWidth = 4;
         oscilloscopeGhostContext.strokeStyle = "rgba(0, 200, 100, 0.5)";
+        oscilloscopeGhostContext.fillStyle = "rgba(0, 200, 100, 0.2)"; // Farbe für die Fläche
         oscilloscopeGhostContext.beginPath();
 
         x = 0;
@@ -123,6 +128,9 @@ function setupOscilloscope(context, device, outputNode) {
             x += sliceWidth;
         }
         oscilloscopeGhostContext.lineTo(oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height / 2);
+        oscilloscopeGhostContext.lineTo(0, oscilloscopeGhostCanvas.height / 2); // Zurück zur Basislinie
+        oscilloscopeGhostContext.closePath();
+        oscilloscopeGhostContext.fill(); // Fläche füllen
         oscilloscopeGhostContext.stroke();
     }
 
@@ -132,7 +140,8 @@ function setupOscilloscope(context, device, outputNode) {
 
         oscilloscopeExperimentalContext.clearRect(0, 0, oscilloscopeExperimentalCanvas.width, oscilloscopeExperimentalCanvas.height);
         oscilloscopeExperimentalContext.lineWidth = 2.5;
-        oscilloscopeExperimentalContext.strokeStyle = "rgba(50, 255, 135, 0.9)"; // Auffällige rote Linie für starken Kontrast
+        oscilloscopeExperimentalContext.strokeStyle = "rgba(50, 255, 135, 0.9)";
+        oscilloscopeExperimentalContext.fillStyle = "rgba(50, 255, 135, 0.3)"; // Farbe für die Fläche
         oscilloscopeExperimentalContext.beginPath();
 
         const sliceWidthExp = oscilloscopeExperimentalCanvas.width / bufferLengthExp;
@@ -140,7 +149,7 @@ function setupOscilloscope(context, device, outputNode) {
 
         for (let i = 0; i < bufferLengthExp; i++) {
             const v = dataArrayExp[i] / 128.0;
-            const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 2 * Math.random()); // Verzerrung für glitchigen Effekt
+            const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 2 * Math.random());
 
             if (i === 0) {
                 oscilloscopeExperimentalContext.moveTo(x, y);
@@ -151,6 +160,9 @@ function setupOscilloscope(context, device, outputNode) {
             x += sliceWidthExp;
         }
         oscilloscopeExperimentalContext.lineTo(oscilloscopeExperimentalCanvas.width, oscilloscopeExperimentalCanvas.height / 2);
+        oscilloscopeExperimentalContext.lineTo(0, oscilloscopeExperimentalCanvas.height / 2); // Zurück zur Basislinie
+        oscilloscopeExperimentalContext.closePath();
+        oscilloscopeExperimentalContext.fill(); // Fläche füllen
         oscilloscopeExperimentalContext.stroke();
     }
 
@@ -164,9 +176,6 @@ function setupOscilloscope(context, device, outputNode) {
         resizeCanvas(oscilloscopeExperimentalCanvas);
     });
 }
-
-
-
 
 function loadRNBOScript(version) {
     return new Promise((resolve, reject) => {
