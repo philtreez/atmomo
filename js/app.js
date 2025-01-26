@@ -54,7 +54,7 @@ function setupOscilloscope(context, device, outputNode) {
 
     function resizeCanvas(canvas) {
         canvas.width = window.innerWidth;  
-        canvas.height = 430;               
+        canvas.height = 1200;               
     }
 
     function drawOscilloscope() {
@@ -76,7 +76,7 @@ function setupOscilloscope(context, device, outputNode) {
 
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
-            const y = (v * oscilloscopeCanvas.height * 0.3) + (oscilloscopeCanvas.height * 0.2); // Wellenform weiter oben (0.2 statt 0.5)
+            const y = (v * oscilloscopeCanvas.height * 0.3) + (oscilloscopeCanvas.height * 0.3); // Wellenform weiter oben (0.2 statt 0.5)
 
             // Grüne Fläche von der Wellenlinie nach unten
             oscilloscopeContext.lineTo(x, y);
