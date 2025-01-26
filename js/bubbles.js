@@ -1,11 +1,12 @@
 let bubbles = [];
 
 function setup() {
-  createCanvas(1500, 1000, WEBGL); // 3D-Canvas
-  for (let i = 0; i < 150; i++) { // Anzahl der Sphären
+  let canvas = createCanvas(windowWidth, windowHeight, WEBGL); // Canvas an Fenstergröße anpassen
+  canvas.parent('p5-canvas'); // Canvas in das div-Element einbinden
+  for (let i = 0; i < 50; i++) {
     bubbles.push(new Bubble());
   }
-  noStroke(); // Keine Umrandung der Sphären
+  noStroke();
 }
 
 function draw() {
