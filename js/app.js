@@ -38,7 +38,7 @@ async function setup() {
 
 function setupOscilloscope(context, device, outputNode) {
     const analyserNode = context.createAnalyser();
-    analyserNode.fftSize = 1024; 
+    analyserNode.fftSize = 4096; 
     analyserNode.smoothingTimeConstant = 0.85;
 
     const bufferLength = analyserNode.frequencyBinCount;
