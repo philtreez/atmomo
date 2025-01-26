@@ -38,7 +38,7 @@ async function setup() {
 
 function setupOscilloscope(context, device, outputNode) {
     const analyserNode = context.createAnalyser();
-    analyserNode.fftSize = 2048; 
+    analyserNode.fftSize = 1024; 
     analyserNode.smoothingTimeConstant = 0.85;
 
     const bufferLength = analyserNode.frequencyBinCount;
@@ -76,7 +76,7 @@ function setupOscilloscope(context, device, outputNode) {
 
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
-            const y = (v * oscilloscopeCanvas.height * 0.3) + (oscilloscopeCanvas.height * 0.3); // Wellenform weiter oben (0.2 statt 0.5)
+            const y = (v * oscilloscopeCanvas.height * 0.5) + (oscilloscopeCanvas.height * 0.3); // Wellenform weiter oben (0.2 statt 0.5)
 
             // Grüne Fläche von der Wellenlinie nach unten
             oscilloscopeContext.lineTo(x, y);
