@@ -47,28 +47,10 @@ function setupOscilloscope(context, device, outputNode) {
     device.node.connect(analyserNode);
     analyserNode.connect(outputNode);
 
-    // **Erster Canvas (Hauptoszilloskop)**
+    // **Canvas für die Wellenform**
     const oscilloscopeCanvas = document.getElementById('oscilloscope-main');
     resizeCanvas(oscilloscopeCanvas);
     const oscilloscopeContext = oscilloscopeCanvas.getContext("2d");
-
-    // **Zweiter Canvas (Ghost-Welle)**
-    const oscilloscopeGhostCanvas = document.getElementById('oscilloscope-ghost');
-    resizeCanvas(oscilloscopeGhostCanvas);
-    const oscilloscopeGhostContext = oscilloscopeGhostCanvas.getContext("2d");
-
-    // **Dritter Canvas (Experimental)**
-    const oscilloscopeExperimentalCanvas = document.getElementById('oscilloscope-experimental');
-    resizeCanvas(oscilloscopeExperimentalCanvas);
-    const oscilloscopeExperimentalContext = oscilloscopeExperimentalCanvas.getContext("2d");
-
-    const analyserNodeExperimental = context.createAnalyser();
-    analyserNodeExperimental.fftSize = 1024; // Andere FFT-Auflösung für mehr Details
-    analyserNodeExperimental.smoothingTimeConstant = 1; // Weniger Glättung für schärfere Peaks
-    const bufferLengthExp = analyserNodeExperimental.frequencyBinCount;
-    const dataArrayExp = new Uint8Array(bufferLengthExp);
-
-    device.node.connect(analyserNodeExperimental);
 
     function resizeCanvas(canvas) {
         canvas.width = window.innerWidth;  
@@ -79,11 +61,16 @@ function setupOscilloscope(context, device, outputNode) {
         requestAnimationFrame(drawOscilloscope);
         analyserNode.getByteTimeDomainData(dataArray);
 
-        // **Haupt-Visualisierung**
+        // **Hintergrund löschen**
         oscilloscopeContext.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
+
+        // **Grüne Fläche bis unten füllen**
+        oscilloscopeContext.fillStyle = "rgba(0, 255, 130, 0.3)"; // Halbtransparentes Grün
+        oscilloscopeContext.fillRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
+
+        // **Wellenform zeichnen**
         oscilloscopeContext.lineWidth = 2;
-        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)";
-        oscilloscopeContext.fillStyle = "rgba(0, 255, 130, 0.3)"; // Farbe für die Fläche
+        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)"; // Farbe der Wellenform
         oscilloscopeContext.beginPath();
 
         const sliceWidth = oscilloscopeCanvas.width / bufferLength;
@@ -91,7 +78,7 @@ function setupOscilloscope(context, device, outputNode) {
 
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
-            const y = (v * oscilloscopeCanvas.height * 0.8) + (Math.sin(i * 0.02) * 20);
+            const y = (v * oscilloscopeCanvas.height * 0.4) + (oscilloscopeCanvas.height / 2); // Weniger hektisch (0.4 statt 0.8)
 
             if (i === 0) {
                 oscilloscopeContext.moveTo(x, y);
@@ -102,78 +89,14 @@ function setupOscilloscope(context, device, outputNode) {
             x += sliceWidth;
         }
         oscilloscopeContext.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height / 2);
-        oscilloscopeContext.lineTo(0, oscilloscopeCanvas.height / 2); // Zurück zur Basislinie
-        oscilloscopeContext.closePath();
-        oscilloscopeContext.fill(); // Fläche füllen
         oscilloscopeContext.stroke();
-
-        // **Zweite Welle ("Ghost")**
-        oscilloscopeGhostContext.clearRect(0, 0, oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height);
-        oscilloscopeGhostContext.lineWidth = 4;
-        oscilloscopeGhostContext.strokeStyle = "rgba(0, 200, 100, 0.5)";
-        oscilloscopeGhostContext.fillStyle = "rgba(0, 200, 100, 0.2)"; // Farbe für die Fläche
-        oscilloscopeGhostContext.beginPath();
-
-        x = 0;
-        for (let i = 0; i < bufferLength; i++) {
-            const v = dataArray[i] / 256.0;
-            const y = (v * oscilloscopeGhostCanvas.height * 1.2) + (Math.sin(i * 0.015) * 25);
-
-            if (i === 0) {
-                oscilloscopeGhostContext.moveTo(x, y);
-            } else {
-                oscilloscopeGhostContext.lineTo(x, y);
-            }
-
-            x += sliceWidth;
-        }
-        oscilloscopeGhostContext.lineTo(oscilloscopeGhostCanvas.width, oscilloscopeGhostCanvas.height / 2);
-        oscilloscopeGhostContext.lineTo(0, oscilloscopeGhostCanvas.height / 2); // Zurück zur Basislinie
-        oscilloscopeGhostContext.closePath();
-        oscilloscopeGhostContext.fill(); // Fläche füllen
-        oscilloscopeGhostContext.stroke();
-    }
-
-    function drawExperimentalOscilloscope() {
-        requestAnimationFrame(drawExperimentalOscilloscope);
-        analyserNodeExperimental.getByteTimeDomainData(dataArrayExp);
-
-        oscilloscopeExperimentalContext.clearRect(0, 0, oscilloscopeExperimentalCanvas.width, oscilloscopeExperimentalCanvas.height);
-        oscilloscopeExperimentalContext.lineWidth = 2.5;
-        oscilloscopeExperimentalContext.strokeStyle = "rgba(50, 255, 135, 0.9)";
-        oscilloscopeExperimentalContext.fillStyle = "rgba(50, 255, 135, 0.3)"; // Farbe für die Fläche
-        oscilloscopeExperimentalContext.beginPath();
-
-        const sliceWidthExp = oscilloscopeExperimentalCanvas.width / bufferLengthExp;
-        let x = 0;
-
-        for (let i = 0; i < bufferLengthExp; i++) {
-            const v = dataArrayExp[i] / 128.0;
-            const y = (v * oscilloscopeExperimentalCanvas.height * 0.6) + (Math.cos(i * 0.03) * 2 * Math.random());
-
-            if (i === 0) {
-                oscilloscopeExperimentalContext.moveTo(x, y);
-            } else {
-                oscilloscopeExperimentalContext.lineTo(x, y);
-            }
-
-            x += sliceWidthExp;
-        }
-        oscilloscopeExperimentalContext.lineTo(oscilloscopeExperimentalCanvas.width, oscilloscopeExperimentalCanvas.height / 2);
-        oscilloscopeExperimentalContext.lineTo(0, oscilloscopeExperimentalCanvas.height / 2); // Zurück zur Basislinie
-        oscilloscopeExperimentalContext.closePath();
-        oscilloscopeExperimentalContext.fill(); // Fläche füllen
-        oscilloscopeExperimentalContext.stroke();
     }
 
     drawOscilloscope();
-    drawExperimentalOscilloscope();
 
     // **Canvas soll sich anpassen, wenn Fenstergröße geändert wird**
     window.addEventListener("resize", () => {
         resizeCanvas(oscilloscopeCanvas);
-        resizeCanvas(oscilloscopeGhostCanvas);
-        resizeCanvas(oscilloscopeExperimentalCanvas);
     });
 }
 
