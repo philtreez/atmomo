@@ -9,7 +9,7 @@ function setup() {
 }
 
 function draw() {
-  background(200);
+  background(0);
 
   // Kamera-Steuerung mit der Maus
   orbitControl();
