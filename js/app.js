@@ -64,7 +64,7 @@ function setupOscilloscope(context, device, outputNode) {
         // **Hintergrund löschen**
         oscilloscopeContext.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
 
-        // **Grüne Fläche bis zur Wellenlinie füllen**
+        // **Grüne Fläche von der Wellenlinie bis unten füllen**
         oscilloscopeContext.fillStyle = "rgba(0, 255, 130, 0.3)"; // Halbtransparentes Grün
         oscilloscopeContext.beginPath();
 
@@ -76,9 +76,9 @@ function setupOscilloscope(context, device, outputNode) {
 
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
-            const y = (v * oscilloscopeCanvas.height * 0.3) + (oscilloscopeCanvas.height * 0.3); // Wellenform weiter oben (0.3 statt 0.5)
+            const y = (v * oscilloscopeCanvas.height * 0.3) + (oscilloscopeCanvas.height * 0.2); // Wellenform weiter oben (0.2 statt 0.5)
 
-            // Grüne Fläche bis zur Wellenlinie
+            // Grüne Fläche von der Wellenlinie nach unten
             oscilloscopeContext.lineTo(x, y);
 
             x += sliceWidth;
