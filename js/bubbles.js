@@ -9,7 +9,8 @@ function setup() {
 }
 
 function draw() {
-  background(200);
+  clear(); // Löscht den Hintergrund und macht ihn transparent
+  // background(200); <-- Diese Zeile entfernen oder auskommentieren
 
   // Kamera-Steuerung mit der Maus
   orbitControl();
