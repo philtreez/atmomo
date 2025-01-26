@@ -44,7 +44,7 @@ class Bubble {
   show() {
     push();
     translate(this.x, this.y, this.z); // Position der Sphäre im 3D-Raum
-    fill(0, 255, 130, 150); // Halbtransparentes Grün
+    fill(85, 115, 255, 150); // Halbtransparentes Grün
     sphere(this.size); // Zeichne die Sphäre
     pop();
   }
