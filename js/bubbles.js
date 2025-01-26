@@ -1,8 +1,8 @@
 let bubbles = [];
 
 function setup() {
-  createCanvas(1000, 1000, WEBGL); // 3D-Canvas
-  for (let i = 0; i < 50; i++) { // Anzahl der Sphären
+  createCanvas(1500, 1000, WEBGL); // 3D-Canvas
+  for (let i = 0; i < 150; i++) { // Anzahl der Sphären
     bubbles.push(new Bubble());
   }
   noStroke(); // Keine Umrandung der Sphären
@@ -27,7 +27,7 @@ class Bubble {
     this.x = random(-width / 2, width / 2); // Zufällige x-Position im 3D-Raum
     this.y = height / 2 + random(100); // Startposition unten
     this.z = random(-width / 2, width / 2); // Zufällige z-Position im 3D-Raum
-    this.size = random(10, 30); // Zufällige Größe der Sphäre
+    this.size = random(2, 30); // Zufällige Größe der Sphäre
     this.speed = random(1, 3); // Zufällige Geschwindigkeit
   }
 
