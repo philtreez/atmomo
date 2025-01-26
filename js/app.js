@@ -64,31 +64,35 @@ function setupOscilloscope(context, device, outputNode) {
         // **Hintergrund löschen**
         oscilloscopeContext.clearRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
 
-        // **Grüne Fläche bis unten füllen**
+        // **Grüne Fläche bis zur Wellenlinie füllen**
         oscilloscopeContext.fillStyle = "rgba(0, 255, 130, 0.3)"; // Halbtransparentes Grün
-        oscilloscopeContext.fillRect(0, 0, oscilloscopeCanvas.width, oscilloscopeCanvas.height);
-
-        // **Wellenform zeichnen**
-        oscilloscopeContext.lineWidth = 2;
-        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)"; // Farbe der Wellenform
         oscilloscopeContext.beginPath();
 
         const sliceWidth = oscilloscopeCanvas.width / bufferLength;
         let x = 0;
 
+        // **Wellenform zeichnen und grüne Fläche darunter füllen**
+        oscilloscopeContext.moveTo(0, oscilloscopeCanvas.height); // Startpunkt unten links
+
         for (let i = 0; i < bufferLength; i++) {
             const v = dataArray[i] / 256.0;
-            const y = (v * oscilloscopeCanvas.height * 0.4) + (oscilloscopeCanvas.height / 2); // Weniger hektisch (0.4 statt 0.8)
+            const y = (v * oscilloscopeCanvas.height * 0.3) + (oscilloscopeCanvas.height / 2); // Weniger hektisch (0.3 statt 0.4)
 
-            if (i === 0) {
-                oscilloscopeContext.moveTo(x, y);
-            } else {
-                oscilloscopeContext.lineTo(x, y);
-            }
+            // Grüne Fläche bis zur Wellenlinie
+            oscilloscopeContext.lineTo(x, y);
 
             x += sliceWidth;
         }
-        oscilloscopeContext.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height / 2);
+
+        // **Grüne Fläche schließen**
+        oscilloscopeContext.lineTo(oscilloscopeCanvas.width, oscilloscopeCanvas.height); // Nach unten rechts
+        oscilloscopeContext.lineTo(0, oscilloscopeCanvas.height); // Zurück nach unten links
+        oscilloscopeContext.closePath();
+        oscilloscopeContext.fill(); // Grüne Fläche füllen
+
+        // **Wellenform zeichnen**
+        oscilloscopeContext.lineWidth = 2;
+        oscilloscopeContext.strokeStyle = "rgba(0, 255, 130, 0.8)"; // Farbe der Wellenform
         oscilloscopeContext.stroke();
     }
 
